@@ -1,4 +1,4 @@
-WITH RECURSIVE gen_data AS (
+WITH RECURSIVE ecoli_generation AS (
 	SELECT 
 		id,
 		parent_id,
@@ -11,19 +11,17 @@ WITH RECURSIVE gen_data AS (
 		e.parent_id,
 		(generation + 1) AS generation
 	FROM ecoli_data e
-	INNER JOIN gen_data
-	ON e.parent_id = gen_data.id
+	INNER JOIN ecoli_generation
+	ON e.parent_id = ecoli_generation.id
 )
 SELECT 
-	COUNT(no_child_data.id) AS `count`,
+	count(id) AS count,
 	generation
-FROM gen_data
-LEFT JOIN (
-	SELECT e1.id
-	FROM ecoli_data e1
-	LEFT JOIN ecoli_data e2
-	ON e1.id = e2.parent_id
-	WHERE e2.id IS null
-) no_child_data
-ON gen_data.id = no_child_data.id
-GROUP BY generation
+FROM ecoli_generation 
+WHERE id NOT IN (
+	SELECT distinct parent_id 
+	FROM ecoli_data 
+	WHERE parent_id IS NOT NULL 
+)
+GROUP BY generation 
+ORDER BY generation 
