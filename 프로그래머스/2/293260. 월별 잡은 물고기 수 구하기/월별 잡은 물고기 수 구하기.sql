@@ -1,6 +1,1 @@
-SELECT
-    COUNT(1) AS fish_count,
-    month(time) AS month
-FROM fish_info
-GROUP BY month(time)
-ORDER BY month
+-- 코드를 작성해주세요
